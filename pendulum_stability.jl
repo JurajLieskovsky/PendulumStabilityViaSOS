@@ -49,7 +49,8 @@ optimize!(model)
 Θ = [x_ for x_ in θs, _ in ωs]
 Ω = [y_ for _ in θs, y_ in ωs]
 
-Z = map((θ_, ω_) -> value(V)(s => sin(θ_), c => cos(θ_), ω => ω_), Θ, Ω)
+opt_V = value(V)
+Z = map((θ_, ω_) -> opt_V(s => sin(θ_), c => cos(θ_), ω => ω_), Θ, Ω)
 
 contour(Θ, Ω, Z, levels=10, labels=true)
 
