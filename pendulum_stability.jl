@@ -20,8 +20,8 @@ x0 = [0, 1, 0]
 model = SOSModel(Mosek.Optimizer)
 
 ## V(x)
-m = monomials(x, 0:2)
-@variable(model, V, PolyJuMP.Poly(m))
+m = monomials(x, 0:1)
+@variable(model, V, SOSPoly(m))
 
 ## domain of interest
 S = @set s^2 + c^2 == 1
