@@ -6,13 +6,15 @@ using LinearAlgebra
 using MosekTools, Mosek
 
 # Pendulum's dynamics (including equilibrium point)
-k = 1   # g * m * l / m * l^2
-b = 0.1 # b / m * l^2
+g = 9.81
+m = 1
+l = 1
+b = 0.1
 
 @polyvar s c ω
 
 x = [s, c, ω]
-f = [c * ω, -s * ω, -k * s - b * ω]
+f = [c * ω, -s * ω, (-g * m * l * s - b * ω) / (m * l^2)]
 
 x0 = [0, 1, 0]
 
@@ -31,10 +33,10 @@ pos = 1e-4 * dot(x - x0, x - x0)
 
 ## Constraints
 ### strictly positive V
-@constraint(model, V >= pos, domain = S)
+@constraint(model, V >= pos)
 
 ### negative V̇
-@constraint(model, -dot(differentiate(V, x), f) >= pos * s^2, domain = S)
+@constraint(model, -dot(differentiate(V, x), f) >= pos * s^2)
 
 ### V(x0) = 0
 @constraint(model, V(s => x0[1], c => x0[2], ω => x0[3]) == 0)
@@ -44,7 +46,7 @@ optimize!(model)
 
 # Plotting
 θs = -2*pi:1e-2*pi:2*pi
-ωs = -2.5:1e-2:2.5
+ωs = -3:1e-2:3
 
 Θ = [x_ for x_ in θs, _ in ωs]
 Ω = [y_ for _ in θs, y_ in ωs]
